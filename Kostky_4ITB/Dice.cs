@@ -13,8 +13,7 @@ namespace Kostky_4ITB
     public partial class Dice : UserControl
     {
         public event Action<Dice> RollEnded;
-        public bool _isAnimationRunning = false;
-        public bool AAA_IsAnimationRunning => _isAnimationRunning;
+        public bool IsAnimationRunning => timer1.Enabled;
 
         private int currentNumber = 3;
         private static Random generator = new Random();
@@ -22,6 +21,24 @@ namespace Kostky_4ITB
 
         int fastIteration = 10;
         int slowIteration = 3;
+
+        private bool isLocked;
+        public bool IsLocked { 
+            get { return isLocked; } 
+            set { 
+                isLocked = value;
+                BackColor = isLocked ? Color.LightGreen : Color.White;
+            }
+        }
+
+        private bool isDeeplyLocked;
+        public bool IsDeeplyLocked {
+            get { return isDeeplyLocked; }
+            set {
+                isDeeplyLocked = value;
+                BackColor = isDeeplyLocked ? Color.PaleVioletRed : Color.White;
+            }
+        }
 
         public int CurrentNumber {
             get { return currentNumber; }
@@ -36,14 +53,21 @@ namespace Kostky_4ITB
         }
 
         public void Roll() {
+            if(IsLocked) {
+                IsDeeplyLocked = true;
+            }
+
+            if (IsLocked || IsDeeplyLocked)
+                return;
+
             timer1.Interval = 50;
             fastIteration = generator.Next(7,13);
             slowIteration = generator.Next(2, 5);
             timer1.Start();
-            _isAnimationRunning = true;
         }
 
         private void Dice_Paint(object sender, PaintEventArgs e) {
+
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             if (currentNumber % 2 == 1) {
@@ -81,7 +105,6 @@ namespace Kostky_4ITB
             slowIteration--;
             if(slowIteration == 0) {
                 timer1.Stop();
-                _isAnimationRunning = false;
                 RollEnded?.Invoke(this);
             }
         }
