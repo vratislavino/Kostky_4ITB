@@ -27,6 +27,10 @@ namespace Kostky_4ITB
 
             foreach (var player in players) {
                 var playerScore = new PlayerScore(player);
+                playerScore.PlayerWon += (name) => {
+                    MessageBox.Show("Hr·Ë " + name + " vyhr·l!");
+                    Application.Restart();
+                };
                 playerScores.Add(playerScore);
                 flowLayoutPanel2.Controls.Add(playerScore);
             }
